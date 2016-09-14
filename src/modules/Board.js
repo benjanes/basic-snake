@@ -9,6 +9,7 @@ export default class Board {
     this.baseGrid = [];
     this.makeBaseGrid(width, height);
     this.foodSrc = new Food(width, height);
+    this.speed = SPEED;
     
     this.grid = null;
     this.score = 0;
@@ -61,7 +62,7 @@ export default class Board {
   }
 
   startGame() {
-    this.gameInterval = setInterval(this.updatePos.bind(this), SPEED);
+    this.updatePos();
   }
 
   updatePos() {
@@ -69,14 +70,16 @@ export default class Board {
 
     if (newPos.isEating) {
       this.score += 1;
+      this.speed -= 10;
       this.addFood();
     }
 
     this.addSnakeAndFoodToGrid();    
 
     if (newPos.collision) {
-      clearInterval(this.gameInterval);
       this.killBoard();
+    } else {
+      setTimeout(this.updatePos.bind(this), this.speed);
     }
   }
 
@@ -121,9 +124,6 @@ export default class Board {
       this.drawGrid();
       setTimeout(this.killBoard.bind(this), 20);
     }
-
-    // this.currGrid.forEach(row => row[0] = 9);
-    // this.drawGrid();
   }
 }
 
