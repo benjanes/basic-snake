@@ -7,5 +7,7 @@ const gameNode = document.getElementById('game_board');
 
 let board = new Board(WIDTH, HEIGHT, gameNode);
 
-board.drawGrid();
+window.addEventListener('keydown', board.handleKeyDown.bind(board));
+
+// board.drawGrid();
 
