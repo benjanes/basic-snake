@@ -11,6 +11,7 @@ export default class Board {
     this.foodSrc = new Food(width, height);
     
     this.grid = null;
+    this.score = 0;
 
     this.node = $node;
     this.snake = new Snake(Math.floor(width / 2), Math.floor(height / 2), LENGTH);
@@ -34,10 +35,11 @@ export default class Board {
   }
 
   drawGrid() {
-    let gridString = this.currGrid.reduce((string, currentRow) => {
-      return string + '\n' + currentRow.reduce((rowString, currentCell) => {
+    let gridString = this.currGrid.reduce((string, currentRow, rowIndex) => {
+      var row = string + '\n' + currentRow.reduce((rowString, currentCell) => {
         return rowString + currentCell;
       }, '|') + '|';
+      return rowIndex ? row : row + ' ' + this.score;
     }, addBorder(this.width)) + '\n' + addBorder(this.width);
 
     this.node.innerText = gridString;
@@ -66,6 +68,7 @@ export default class Board {
     var newPos = this.snake.moveSnake(this.currDir, this.food);
 
     if (newPos.isEating) {
+      this.score += 1;
       this.addFood();
     }
 
@@ -98,19 +101,19 @@ export default class Board {
 
   killBoard() {
     var rowLength = this.width;
-    if (this.currGrid[this.height - 1][this.width - 1] !== 9) {
+    if (this.currGrid[this.height - 1][this.width - 1] !== 'S') {
 
       this.currGrid = this.currGrid.map(row => {
-        var place = row.lastIndexOf(9);
+        var place = row.lastIndexOf('S');
         if (place !== -1 && place <= rowLength - 2) {
-          row[place + 1] = 9;
+          row[place + 1] = 'S';
         }
         return row;
       });
 
       for (let i = 0; i < this.height; i++) {
-        if (this.currGrid[i][0] !== 9) {
-          this.currGrid[i][0] = 9;
+        if (this.currGrid[i][0] !== 'S') {
+          this.currGrid[i][0] = 'S';
           break;
         }
       }
