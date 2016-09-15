@@ -2,6 +2,10 @@ import Snake from './Snake';
 import Food from './Food';
 import { LENGTH, SPEED } from '../constants';
 
+let killDur = 12;
+let currCycle = 0;
+let easeFn = duration => duration * 1.1;
+
 export default class Board {
   constructor(width, height, $node) {
     this.width = width;
@@ -104,7 +108,11 @@ export default class Board {
 
   killBoard() {
     var rowLength = this.width;
+
     if (this.currGrid[this.height - 1][this.width - 1] !== 'S') {
+      if (currCycle > (this.height + this.width) / 2) {
+        easeFn = duration => duration * 0.9;
+      }
 
       this.currGrid = this.currGrid.map(row => {
         var place = row.lastIndexOf('S');
@@ -122,7 +130,9 @@ export default class Board {
       }
 
       this.drawGrid();
-      setTimeout(this.killBoard.bind(this), 20);
+      currCycle += 1;
+      killDur = easeFn(killDur);
+      setTimeout(this.killBoard.bind(this), killDur);
     }
   }
 }
